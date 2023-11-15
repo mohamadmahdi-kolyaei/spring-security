@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.model.Authority;
 import com.example.demo.model.Customer;
 import com.example.demo.repsitory.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 @Component
 public class EasyBankUsernamePwdAuthenticationProvider implements AuthenticationProvider {
     @Autowired
@@ -30,8 +33,7 @@ public class EasyBankUsernamePwdAuthenticationProvider implements Authentication
         Optional<Customer> customer = customerRepository.findByEmail(userName);
         if (customer.isPresent()){
             if (passwordEncoder.matches(pwd , customer.get().getPwd())){
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(customer.get().getRoll()));
+                List<GrantedAuthority> authorities = getGrantedAuthority(customer.get().getAuthorities());
                 return new UsernamePasswordAuthenticationToken(userName , pwd , authorities);
             }else {
                 throw new BadCredentialsException("invalid password !!");
@@ -40,6 +42,15 @@ public class EasyBankUsernamePwdAuthenticationProvider implements Authentication
         }else {
             throw new BadCredentialsException("no use registered with these details ");
         }
+    }
+
+    private List<GrantedAuthority> getGrantedAuthority(Set<Authority> authorities){
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for (Authority authority:authorities
+             ) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
+        }
+        return grantedAuthorities;
     }
 
     @Override

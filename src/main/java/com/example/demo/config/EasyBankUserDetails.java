@@ -34,7 +34,7 @@ import java.util.Optional;
 //            userName = customer.get().getEmail();
 //            password = customer.get().getPwd();
 //            authorities = new ArrayList<>();
-//            authorities.add(new SimpleGrantedAuthority(customer.get().getRoll()));
+//            authorities.add(new SimpleGrantedAuthority(customer.get().getRole()));
 //        }
 //
 //        return new User(userName , password , authorities);
